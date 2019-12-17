@@ -1,0 +1,22 @@
+version: '3'
+services:
+  app:
+    build: .
+    command: npm start
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:3.6
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-data:/data/db
+      - mongo-config:/data/configdb
+volumes:
+  db-data:
+  mongo-config:
