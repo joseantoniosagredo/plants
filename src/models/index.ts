@@ -4,4 +4,4 @@ mongooose.connect('mongodb://mongo:27017/plants')
 
 export { default as User } from './User';
 export { default as Plant } from './Plant';
-
+export { default as Register } from './Register'

@@ -1,5 +1,6 @@
 
 export enum ModelsNames {
     USER = 'user',
-    PLANT = 'plant'
+    PLANT = 'plant',
+    REGISTER = 'register'
 }
