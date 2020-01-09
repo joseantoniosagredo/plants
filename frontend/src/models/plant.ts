@@ -1,3 +1,6 @@
 export type PlantType = {
-    _id:string
+    _id: string,
+    name: string,
+    species?: string,
+    mainPicture?: string
 }

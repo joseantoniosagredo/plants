@@ -1,0 +1,1 @@
+export const imageURL = (id:string) => `/image/${id}`

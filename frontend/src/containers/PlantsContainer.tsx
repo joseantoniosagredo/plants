@@ -3,6 +3,7 @@ import { PlantType } from '../models/plant';
 import { fetchPlantIfNeeded } from '../actions/plantActions';
 import { connect } from 'react-redux';
 import { ReducerType, getPlants, isFetchingPlants } from '../reducers';
+import PlantSet from '../ui/PlantSet';
 
 type PlantsContainerProps = {
     plants: PlantType[],
@@ -15,15 +16,15 @@ function PlantsContainer(props: PlantsContainerProps) {
         props.fetchPlantIfNeeded()
     })
 
-    return null
+    return <PlantSet plants={props.plants} />
 
 }
 
-function mapStateToProps(state:ReducerType){
+function mapStateToProps(state: ReducerType) {
     return {
-        plants:getPlants(state),
-        loading:isFetchingPlants(state)
+        plants: getPlants(state),
+        loading: isFetchingPlants(state)
     }
 }
 
-export default connect(mapStateToProps,{fetchPlantIfNeeded})(PlantsContainer)
+export default connect(mapStateToProps, { fetchPlantIfNeeded })(PlantsContainer)

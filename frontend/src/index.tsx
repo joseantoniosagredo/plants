@@ -9,6 +9,8 @@ import { createStore, compose, applyMiddleware } from 'redux';
 import reducers from './reducers';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
+import { MuiThemeProvider } from '@material-ui/core';
+import theme from './provider/theme';
 
 const middleWare = [];
 middleWare.push(thunk)
@@ -21,10 +23,12 @@ if (process.env.NODE_ENV === 'development')
 
 
 
-ReactDOM.render(<Provider store={createStore(reducers,compose(applyMiddleware(...middleWare)))}>
+ReactDOM.render(<Provider store={createStore(reducers, compose(applyMiddleware(...middleWare)))}>
+  <MuiThemeProvider theme={theme}>
     <BrowserRouter>
-        <App />
+      <App />
     </BrowserRouter>
+  </MuiThemeProvider>
 </Provider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
