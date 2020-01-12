@@ -14,15 +14,21 @@ type Props = {
 const styles = makeStyles(theme => createStyles({
     root: {
         display: 'flex'
+    },
+    fab: {
+        display: 'flex',
+        button: 20,
+        right: 20
     }
 }))
 
 export default (props: Props) => {
     const [newPlant, setNewPlant] = React.useState(false)
+    const classes = styles()
     return <Grid container>
         {newPlant && <PlantCardContainer new onCancel={() => setNewPlant(false)} />}
         {props.plants.map(plant => <PlantCardContainer plant={plant} />)}
-        <Fab style={{ display: 'flex', button: 20, right: 20 }} color="primary" aria-label="add" onClick={() => setNewPlant(true)}>
+        <Fab className={classes.fab} color="primary" aria-label="add" onClick={() => setNewPlant(true)}>
             <Add />
         </Fab>
     </Grid>
