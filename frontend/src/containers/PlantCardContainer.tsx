@@ -1,9 +1,19 @@
 import React from 'react'
 import { PlantType } from '../models/plant';
-import Plant from '../ui/Plant';
+import Plant, { PlantProps } from '../ui/Plant';
 import { Omit } from '../utils/typesUtil';
+export type PlantCardContainerProps = WithPlant | NewPlant
 
-export default class PlantCardContainer extends React.Component<{ plant: PlantType }> {
+type WithPlant = {
+    new?: false,
+    plant: PlantType
+}
+type NewPlant = {
+    new: true,
+    onCancel: () => void
+}
+
+export default class PlantCardContainer extends React.Component<PlantCardContainerProps> {
 
     nameRef = React.createRef<HTMLInputElement>()
     fileRef = React.createRef<HTMLInputElement>()
@@ -15,18 +25,15 @@ export default class PlantCardContainer extends React.Component<{ plant: PlantTy
             }
             const data = new FormData()
             data.append('file', this.fileRef.current!.files![0])
-            data.append('plant', '1')
-
             fetch('/image', { method: 'POST', body: data }).then((res) => {
 
             })
         }
-
     }
 
     render() {
         return <Plant
-            plant={this.props.plant}
+            {...this.props}
             nameRef={this.nameRef}
             fileRef={this.fileRef}
             onSubmit={this.onSubmit}
