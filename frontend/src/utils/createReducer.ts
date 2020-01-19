@@ -1,4 +1,6 @@
 import HttpError from "./HttpError";
+import { createAction, ActionUnion } from "./typesUtil";
+import { Dispatch } from "redux";
 
 
 type RequestContainerType<T> = {
@@ -8,7 +10,7 @@ type defaultPagination<T> = {
     total_pages: number
     page: number
     count: number,
-    result:[]
+    result: []
 }
 export type ResponseType<T> = {
     total_pages: number
@@ -18,7 +20,7 @@ export type ResponseType<T> = {
     results: T[]
 }
 
-export type GenericReducerType<T extends { _id: string } > = {
+export type GenericReducerType<T extends { _id: string }> = {
     objects: RequestContainerType<T>,
     requests: RequestContainerType<string[]>
 }
@@ -49,94 +51,103 @@ export function getError<T extends { _id: string }>(state: GenericReducerType<T>
     return null
 }
 
-////////////////////////////////////////////////////////////
-/*
-interface FetchAction {
-    type: string,
-    queryString: string
-}
-interface ReceiveAction<T> extends FetchAction {
-    data: T[]
-}
-interface ErrorAction extends FetchAction {
-    error: HttpError
-}
-interface FetchByIdAction<T> {
-    type: string
-    id: T
-}
 type Values = string | number
-function createReducer<T>(options: {
+const FETCH = 'FETCH'
+const FETCH_BY_ID = 'FETCH_BY_ID'
+const RECEIVE_BY_ID = 'RECEIVE_BY_ID'
+const RECEIVE = 'RECEIVE'
+const ERROR = 'ERROR'
+
+export default function createReducer<T extends { _id: string }>(options: {
     name: string,
+    uri: string,
     id: { [K in keyof T]: T[K] extends Values ? T[K] : never }[keyof T]
 }) {
-    const FETCH = 'FETCH_' + options.name
-    const FETCH_BY_ID = 'FETCH_BY_ID_' + options.name
-    const RECEIVE_BY_ID = 'RECEIVE_BY_ID_' + options.name
-    const RECEIVE = 'RECEIVE_' + options.name
-    const ERROR = 'ERROR_' + options.name
-    function actionIsFetch(action: Action): action is FetchAction {
-        if (action.type === FETCH) return true
-        return false
-    }
-    function actionIsFetchById(action: Action): action is FetchByIdAction<typeof options.id> {
-        if (action.type === FETCH) return true
-        return false
-    }
-    function actionIsReceive(action: Action): action is ReceiveAction<T> {
-        if (action.type === RECEIVE) return true
-        return false
-    }
-    function actionIsError(action: Action): action is ErrorAction {
-        if (action.type === ERROR) return true
-        return false
-    }
     const actionObject = {
-        fetch: (queryString: string = '') => createAction(FETCH, { queryString }),
-        fetchById: (id: number) => createAction(FETCH_BY_ID, { id, queryString: '' }),
-        receive: (queryString: string = '', data: T[]) => createAction(RECEIVE, { queryString, data }),
-        error: (queryString: string = '', error: HttpError) => createAction(ERROR, { queryString, error }),
+        fetch: (queryString: string = '') => createAction(FETCH, { queryString, name }),
+        fetchById: (id: number) => createAction(FETCH_BY_ID, { id, name }),
+        receiveBYId: (id: number, data: T) => createAction(RECEIVE_BY_ID, { id, name, data }),
+        receive: (queryString: string = '', data: T[]) => createAction(RECEIVE, { queryString, name, data }),
+        error: (queryString: string = '', error: HttpError) => createAction(ERROR, { queryString, error, name }),
     }
 
-    function setRequest(state: GenericReducerType<T>, queryString: string, data: Partial<RequestType<T>>) {
+    function setRequest(state: GenericReducerType<T>, queryString: string, callback: () => RequestType<string[]>) {
         return {
             ...state,
             requests: {
                 [queryString]: {
                     ...state.requests[queryString],
-                    isFetching: true
+                    ...callback()
                 }
             }
         }
     }
+    type Action = ActionUnion<typeof actionObject>
 
-    type Action = FetchAction | ReceiveAction<T> | ErrorAction | FetchByIdAction<typeof options.id>
-    /*return function (state: GenericReducerType<T> = { objects: {}, requests: {} }, action: any): GenericReducerType<T> {
+
+
+    function reducer(state: GenericReducerType<T> = { objects: {}, requests: {} }, action: Action): GenericReducerType<T> {
+        if (action.name !== name)
+            return state
         switch (action.type) {
             case FETCH:
-                return setRequest(state, action.queryString, {
-                    ...state.requests[action.queryString],
-                    isFetching: true
-                })
+                return setRequest(state, action.queryString, () => ({
+                    isFetching: true,
+                    invalidate: false,
+                }))
             case RECEIVE:
+                const objects = action.data.reduce<{ [key: string]: RequestType<T> }>((object, d: T) => ({
+                    ...object,
+                    [d._id]: {
+                        isFetching: false,
+                        result: d,
+                        invalidate: false
+                    }
+                }), state.objects)
                 return {
                     ...state,
-                    objects: {
-                        ...state.objects,
-                        ...action.data.map((d: T) => ({ [d[options.id]]: d }))
-                    },
+                    objects,
                     requests: {
                         [action.queryString]: {
                             ...state.requests[action.queryString],
                             isFetching: false,
                             error: null,
-                            result: action.data.map((d: T) => d[options.id])
+                            result: action.data.map((d: T) => d._id)
                         }
                     }
                 }
-        }
+            case ERROR:
+                return setRequest(state, action.queryString, () => ({
+                    isFetching: false,
+                    invalidate: true,
+                    error: action.error
+                }))
+            case FETCH_BY_ID:
+                return {
+                    ...state,
+                    objects: {
+                        ...state.objects,
+                        [action.id]: {
+                            isFetching: true,
+                            invalidate: false,
+                        }
+                    }
+                }
+            case RECEIVE_BY_ID:
+                return {
+                    ...state,
+                    objects: {
+                        ...state.objects,
+                        [action.id]: {
+                            isFetching: true,
+                            invalidate: false,
+                            result: action.data
+                        }
+                    }
+                }
+
             default:
-        return state
+                return state
+        }
     }
 }
-}*/
