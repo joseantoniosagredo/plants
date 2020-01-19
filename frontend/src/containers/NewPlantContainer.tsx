@@ -2,12 +2,13 @@ import React from 'react'
 import { PlantType } from '../models/plant';
 import Plant, { PlantProps } from '../ui/Plant';
 import { Omit } from '../utils/typesUtil';
-import PlantUI from '../ui/PlantUI';
-export type PlantCardContainerProps = {
-    plant: PlantType
+import NewPlantUI from '../ui/NewPlantUI';
+
+type NewPlant = {
+    onCancel: () => void
 }
 
-export default class PlantCardContainer extends React.Component<PlantCardContainerProps> {
+export default class NewPlantCardContainer extends React.Component<NewPlant> {
 
     nameRef = React.createRef<HTMLInputElement>()
     fileRef = React.createRef<HTMLInputElement>()
@@ -26,10 +27,11 @@ export default class PlantCardContainer extends React.Component<PlantCardContain
     }
 
     render() {
-        return <PlantUI
-            refName={this.nameRef}
+        return <NewPlantUI
+            nameRef={this.nameRef}
+            fileRef={this.fileRef}
             onSubmit={this.onSubmit}
-            plant={this.props.plant}
+            onCancel={this.props.onCancel}
         />
     }
 }
