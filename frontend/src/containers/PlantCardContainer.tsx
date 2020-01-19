@@ -1,6 +1,5 @@
 import React from 'react'
 import { PlantType } from '../models/plant';
-import Plant, { PlantProps } from '../ui/Plant';
 import { Omit } from '../utils/typesUtil';
 import PlantUI from '../ui/PlantUI';
 export type PlantCardContainerProps = {
