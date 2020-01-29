@@ -1,5 +1,5 @@
 import React from 'react'
-import { PlantType } from '../models/plant';
+import { PlantType } from '../store/models/plant';
 import { makeStyles, createStyles } from '@material-ui/styles';
 import { Grid, Fab } from '@material-ui/core';
 import PlantCardContainer from '../containers/PlantCardContainer';

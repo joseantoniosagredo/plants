@@ -1,8 +1,8 @@
 import React from 'react'
-import { PlantType } from '../models/plant';
-import { fetchPlantIfNeeded } from '../actions/plantActions';
+import { PlantType } from '../store/models/plant';
+import { fetchPlantIfNeeded } from '../store/actions/plantActions';
 import { connect } from 'react-redux';
-import { ReducerType, getPlants, isFetchingPlants } from '../reducers';
+import { ReducerType, getPlants, isFetchingPlants } from '../store/reducers';
 import PlantSet from '../ui/PlantSet';
 
 type PlantsContainerProps = {

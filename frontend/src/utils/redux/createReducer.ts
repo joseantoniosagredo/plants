@@ -1,5 +1,5 @@
-import HttpError from "./HttpError";
-import { createAction, ActionUnion } from "./typesUtil";
+import HttpError from "../HttpError";
+import { createAction, ActionUnion } from "../typesUtil";
 import { Dispatch } from "redux";
 
 
@@ -58,15 +58,15 @@ const RECEIVE_BY_ID = 'RECEIVE_BY_ID'
 const RECEIVE = 'RECEIVE'
 const ERROR = 'ERROR'
 
-export default function createReducer<T extends { _id: string }>(options: {
+export default function createReducer<T extends { _id: string }>({name,uri,id}: {
     name: string,
     uri: string,
     id: { [K in keyof T]: T[K] extends Values ? T[K] : never }[keyof T]
 }) {
     const actionObject = {
         fetch: (queryString: string = '') => createAction(FETCH, { queryString, name }),
-        fetchById: (id: number) => createAction(FETCH_BY_ID, { id, name }),
-        receiveBYId: (id: number, data: T) => createAction(RECEIVE_BY_ID, { id, name, data }),
+        fetchById: (id: string) => createAction(FETCH_BY_ID, { id, name }),
+        receiveBYId: (id: string, data: T) => createAction(RECEIVE_BY_ID, { id, name, data }),
         receive: (queryString: string = '', data: T[]) => createAction(RECEIVE, { queryString, name, data }),
         error: (queryString: string = '', error: HttpError) => createAction(ERROR, { queryString, error, name }),
     }
@@ -83,9 +83,50 @@ export default function createReducer<T extends { _id: string }>(options: {
         }
     }
     type Action = ActionUnion<typeof actionObject>
-
-
-
+    function post(data: T, callback?: (error: HttpError | null, data?: T) => void) {
+        return (dispatch: Dispatch<Action>) => {
+            const xhttp = new XMLHttpRequest()
+            xhttp.open('POST', uri)
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        const response: T = JSON.parse(this.responseText)
+                        if (callback) callback(null, response)
+                        dispatch(actionObject.receiveBYId(response['_id'],response))
+                    } else if (this.status === 201) {
+                        if (callback) callback(null)
+                    } else {
+                        const error = new HttpError(this.responseText, this.status)
+                        if (callback) callback(error)
+                    }
+                }
+            }
+            xhttp.send(JSON.stringify(data))
+        }
+    }
+    function put(id: string, data: Partial<T>, callback?: (error: HttpError | null, data?: T) => void) {
+        return (dispatch: Dispatch<Action>) => {
+            const xhttp = new XMLHttpRequest()
+            xhttp.open('PUT', uri + id)
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        const response: T = JSON.parse(this.responseText)
+                        if (callback) callback(null, response)
+                        actionObject.receiveBYId(id, response)
+                    } else if (this.status === 201) {
+                        if (callback) callback(null)
+                    } else {
+                        const error = new HttpError(this.responseText, this.status)
+                        if (callback) callback(error)
+                    }
+                }
+            }
+            xhttp.send(JSON.stringify(data))
+        }
+    }
+    
+    
     function reducer(state: GenericReducerType<T> = { objects: {}, requests: {} }, action: Action): GenericReducerType<T> {
         if (action.name !== name)
             return state

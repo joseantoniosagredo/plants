@@ -1,5 +1,5 @@
 import { Omit, Callback } from "../utils/typesUtil";
-import { PlantType } from "../models/plant";
+import { PlantType } from "../store/models/plant";
 
 export default {
     postPlant: (plant: Omit<PlantType, '_id' | 'mainPicture'>, file: string, callback: Callback<PlantType>) => {

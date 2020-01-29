@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { GenericReducerType, getData, isFetching, getError, isInvalidate } from '../utils/createReducer';
+import { GenericReducerType, getData, isFetching, getError, isInvalidate } from '../../utils/redux/createReducer';
 import { PlantType } from '../models/plant';
 import plant from './plantReducer'
 export type ReducerType = {

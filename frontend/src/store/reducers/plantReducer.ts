@@ -1,7 +1,7 @@
-import { createAction } from "../utils/typesUtil";
+import { createAction } from "../../utils/typesUtil";
 import { PlantType } from "../models/plant";
-import HttpError from "../utils/HttpError";
-import { GenericReducerType } from "../utils/createReducer";
+import HttpError from "../../utils/HttpError";
+import { GenericReducerType } from "../../utils/redux/createReducer";
 import { Actions } from "../actions/plantActions";
 
 export default function (state: GenericReducerType<PlantType> = { objects: {}, requests: {} }, actions: Actions): GenericReducerType<PlantType> {

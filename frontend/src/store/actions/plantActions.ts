@@ -1,11 +1,11 @@
-import { createAction, ActionUnion } from "../utils/typesUtil";
+import { createAction, ActionUnion } from "../../utils/typesUtil";
 import { PlantType } from "../models/plant";
-import HttpError from "../utils/HttpError";
+import HttpError from "../../utils/HttpError";
 import { Dispatch } from "redux";
 import { ReducerType, isFetchingPlants, isInvalidPlants } from "../reducers";
-import { ResponseType } from "../utils/createReducer";
+import { ResponseType } from "../../utils/redux/createReducer";
 
-const uri = '/api/rest/plant'
+const uri = '/api/rest/plant/'
 
 const FETCH_PLANT = 'FETCH_PLANTS'
 const FETCH_BY_ID_PLANT = 'FETCH_BY_ID_PLANTS'
@@ -49,6 +49,49 @@ function fetchPlant(querystring: string, callback?: (error: HttpError | null, da
         xhttp.send()
     }
 }
+/*function post<T>(plant: T, callback?: (error: HttpError | null, data?: T) => void) {
+    return (dispatch: Dispatch<Actions>) => {
+        const xhttp = new XMLHttpRequest()
+        xhttp.open('POST', uri)
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                if (this.status === 200) {
+                    const response: T = JSON.parse(this.responseText)
+                    if (callback) callback(null, response)
+                    dispatch
+                } else if (this.status === 201) {
+                    if (callback) callback(null)
+                } else {
+                    const error = new HttpError(this.responseText, this.status)
+                    if (callback) callback(error)
+                }
+            }
+        }
+        xhttp.send(JSON.stringify(plant))
+    }
+}
+function put<E, T>(id: string, plant: Partial<T>, callback?: (error: HttpError | null, data?: T) => void) {
+    return (dispatch: Dispatch<Actions>) => {
+        const xhttp = new XMLHttpRequest()
+        xhttp.open('PUT', uri + id)
+        xhttp.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                if (this.status === 200) {
+                    const response: T = JSON.parse(this.responseText)
+                    if (callback) callback(null, response)
+                    actionObject.receivePlantById(id, response)
+                } else if (this.status === 201) {
+                    if (callback) callback(null)
+                } else {
+                    const error = new HttpError(this.responseText, this.status)
+                    if (callback) callback(error)
+                }
+            }
+        }
+        xhttp.send(JSON.stringify(plant))
+    }
+}*/
+
 export function invalidatePlant(querystring: string = '') {
     return (dispatch: Dispatch<any>) => {
         return dispatch(actionObject.invalidatePlants(querystring))

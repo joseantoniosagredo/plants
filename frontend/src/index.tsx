@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { createStore, compose, applyMiddleware } from 'redux';
-import reducers from './reducers';
+import reducers from './store/reducers';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import { MuiThemeProvider } from '@material-ui/core';

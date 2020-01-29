@@ -12,7 +12,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { PlantType } from '../models/plant';
+import { PlantType } from '../store/models/plant';
 import { Menu, MenuItem, Input } from '@material-ui/core';
 import { Done } from '@material-ui/icons';
 

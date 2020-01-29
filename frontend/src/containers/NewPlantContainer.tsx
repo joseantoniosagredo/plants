@@ -1,5 +1,5 @@
 import React from 'react'
-import { PlantType } from '../models/plant';
+import { PlantType } from '../store/models/plant';
 import { Omit } from '../utils/typesUtil';
 import NewPlantUI from '../ui/NewPlantUI';
 
